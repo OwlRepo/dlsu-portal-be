@@ -4,11 +4,16 @@ import { SignupService } from './signup.service';
 
 describe('SignupController', () => {
   let controller: SignupController;
-
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [SignupController],
-      providers: [SignupService],
+      providers: [
+        SignupService,
+        {
+          provide: 'UserRepository',
+          useValue: {}, // Mock repository
+        },
+      ],
     }).compile();
 
     controller = module.get<SignupController>(SignupController);
