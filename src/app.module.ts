@@ -6,7 +6,6 @@ import { ReportsModule } from './reports/reports.module';
 import { LoginModule } from './login/login.module';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule } from '@nestjs/config';
-import { SignupModule } from './signup/signup.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AdminModule } from './admin/admin.module';
 
@@ -33,7 +32,6 @@ import { AdminModule } from './admin/admin.module';
     EmployeeModule,
     ReportsModule,
     LoginModule,
-    SignupModule,
     AdminModule,
   ],
   controllers: [AppController],
