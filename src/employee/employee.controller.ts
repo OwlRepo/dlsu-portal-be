@@ -48,6 +48,12 @@ export class EmployeeController {
     return this.employeeService.findOne(idOrUsername);
   }
 
+  @Get('device/:deviceId')
+  @ApiOperation({ summary: 'Get employee by device ID' })
+  findByDeviceId(@Param('deviceId') deviceId: string) {
+    return this.employeeService.findByDeviceId(deviceId);
+  }
+
   @Get('created')
   @ApiOperation({ summary: 'Get employees created within a date range' })
   @ApiBody({

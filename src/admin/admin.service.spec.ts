@@ -51,8 +51,15 @@ describe('AdminService', () => {
 
       const result = await service.create(createAdminDto);
 
-      expect(result).toEqual(admin);
-      expect(mockRepository.create).toHaveBeenCalledWith(createAdminDto);
+      expect(result).toEqual({
+        ...admin,
+        password: createAdminDto.password,
+      });
+      expect(mockRepository.create).toHaveBeenCalledWith({
+        ...createAdminDto,
+        adminId: expect.any(String),
+        password: expect.any(String),
+      });
       expect(mockRepository.save).toHaveBeenCalledWith(admin);
     });
   });
@@ -113,7 +120,7 @@ describe('AdminService', () => {
       mockRepository.findOne.mockResolvedValue(existingAdmin);
       mockRepository.save.mockResolvedValue(updatedAdmin);
 
-      const result = await service.update(1, updateAdminDto);
+      const result = await service.update('ADM-123456789012', updateAdminDto);
 
       expect(result).toEqual(updatedAdmin);
       expect(mockRepository.save).toHaveBeenCalled();
@@ -122,7 +129,9 @@ describe('AdminService', () => {
     it('should throw NotFoundException when admin to update is not found', async () => {
       mockRepository.findOne.mockResolvedValue(null);
 
-      await expect(service.update(1, {})).rejects.toThrow(NotFoundException);
+      await expect(service.update('ADM-123456789012', {})).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 
@@ -133,16 +142,21 @@ describe('AdminService', () => {
       mockRepository.findOne.mockResolvedValue(admin);
       mockRepository.remove.mockResolvedValue(admin);
 
-      const result = await service.remove(1);
+      const result = await service.remove('ADM-123456789012');
 
-      expect(result).toEqual(admin);
+      expect(result).toEqual({
+        success: true,
+        message: 'Admin deleted successfully',
+      });
       expect(mockRepository.remove).toHaveBeenCalledWith(admin);
     });
 
     it('should throw NotFoundException when admin to remove is not found', async () => {
       mockRepository.findOne.mockResolvedValue(null);
 
-      await expect(service.remove(1)).rejects.toThrow(NotFoundException);
+      await expect(service.remove('ADM-123456789012')).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 });

@@ -1,9 +1,15 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { LoginService } from './login.service';
 import { JwtService } from '@nestjs/jwt';
+import { getRepositoryToken } from '@nestjs/typeorm';
+import { Admin } from '../admin/entities/admin.entity';
 
 describe('LoginService', () => {
   let service: LoginService;
+
+  const mockAdminRepository = {
+    findOne: jest.fn(),
+  };
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -11,11 +17,11 @@ describe('LoginService', () => {
         LoginService,
         {
           provide: JwtService,
-          useValue: {
-            // Add mock methods as needed
-            sign: jest.fn(),
-            verify: jest.fn(),
-          },
+          useValue: { sign: jest.fn() },
+        },
+        {
+          provide: getRepositoryToken(Admin),
+          useValue: mockAdminRepository,
         },
       ],
     }).compile();

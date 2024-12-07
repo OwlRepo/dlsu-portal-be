@@ -1,10 +1,13 @@
 import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { JwtModule } from '@nestjs/jwt';
 import { LoginService } from './login.service';
 import { LoginController } from './login.controller';
-import { JwtModule } from '@nestjs/jwt';
+import { Admin } from '../admin/entities/admin.entity';
 
 @Module({
   imports: [
+    TypeOrmModule.forFeature([Admin]),
     JwtModule.register({
       secret:
         process.env.JWT_SECRET ||
@@ -14,5 +17,6 @@ import { JwtModule } from '@nestjs/jwt';
   ],
   controllers: [LoginController],
   providers: [LoginService],
+  exports: [TypeOrmModule],
 })
 export class LoginModule {}

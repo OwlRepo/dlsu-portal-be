@@ -19,21 +19,7 @@ export class AdminController {
 
   @Post()
   @ApiOperation({ summary: 'Create a new admin' })
-  @ApiBody({
-    type: CreateAdminDto,
-    examples: {
-      admin: {
-        value: {
-          username: 'johndoe',
-          email: 'john.doe@example.com',
-          password: 'strongPassword123',
-          firstName: 'John',
-          lastName: 'Doe',
-          role: 'admin',
-        },
-      },
-    },
-  })
+  @ApiBody({ type: CreateAdminDto })
   create(@Body() createAdminDto: CreateAdminDto) {
     return this.adminService.create(createAdminDto);
   }
@@ -44,33 +30,33 @@ export class AdminController {
     return this.adminService.findAll();
   }
 
-  @Get(':id')
-  @ApiOperation({ summary: 'Get admin by id' })
-  findOne(@Param('id') id: string) {
-    return this.adminService.findOne(+id);
+  @Get(':adminId')
+  @ApiOperation({ summary: 'Get admin by adminId' })
+  findOne(@Param('adminId') adminId: string) {
+    return this.adminService.findByAdminId(adminId);
   }
 
-  @Patch(':id')
-  @ApiOperation({ summary: 'Update admin by id' })
-  @ApiBody({
-    type: UpdateAdminDto,
-    examples: {
-      admin: {
-        value: {
-          email: 'new.email@example.com',
-          firstName: 'Updated',
-          lastName: 'Name',
-        },
-      },
-    },
-  })
-  update(@Param('id') id: string, @Body() updateAdminDto: UpdateAdminDto) {
-    return this.adminService.update(+id, updateAdminDto);
+  @Patch(':adminId')
+  @ApiOperation({ summary: 'Update admin by adminId' })
+  @ApiBody({ type: UpdateAdminDto })
+  update(
+    @Param('adminId') adminId: string,
+    @Body() updateAdminDto: UpdateAdminDto,
+  ) {
+    return this.adminService.update(adminId, updateAdminDto);
   }
 
-  @Delete(':id')
-  @ApiOperation({ summary: 'Delete admin by id' })
-  remove(@Param('id') id: string) {
-    return this.adminService.remove(+id);
+  @Delete(':adminId')
+  @ApiOperation({ summary: 'Delete admin by adminId' })
+  remove(@Param('adminId') adminId: string) {
+    return this.adminService.remove(adminId);
+  }
+
+  @Patch(':username')
+  updateByUsername(
+    @Param('username') username: string,
+    @Body() updateAdminDto: UpdateAdminDto,
+  ) {
+    return this.adminService.updateByUsername(username, updateAdminDto);
   }
 }

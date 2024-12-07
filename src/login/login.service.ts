@@ -1,20 +1,50 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { LoginDto } from './dto/login.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { AdminLoginDto } from './dto/admin-login.dto';
+import { Admin } from '../admin/entities/admin.entity';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class LoginService {
-  constructor(private jwtService: JwtService) {}
+  constructor(
+    private jwtService: JwtService,
+    @InjectRepository(Admin)
+    private adminRepository: Repository<Admin>,
+  ) {}
 
-  validateLogin(loginDto: LoginDto) {
+  async validateAdminAuthentication(adminLoginDto: AdminLoginDto) {
+    const admin = await this.adminRepository.findOne({
+      where: { username: adminLoginDto.username },
+    });
+
+    if (!admin) {
+      throw new UnauthorizedException(
+        `Admin with username "${adminLoginDto.username}" not found`,
+      );
+    }
+
+    const isPasswordValid = await bcrypt.compare(
+      adminLoginDto.password,
+      admin.password,
+    );
+
+    if (!isPasswordValid) {
+      throw new UnauthorizedException(
+        'Incorrect password provided for admin account',
+      );
+    }
+
     const payload = {
-      username: loginDto.username,
-      sub: 'user123', // typically this would be the user's ID from your database
+      username: admin.username,
+      sub: admin.id,
+      role: 'admin',
     };
 
     return {
-      message: 'Login successful',
+      message: 'Admin authentication successful',
       access_token: 'Bearer ' + this.jwtService.sign(payload),
     };
   }

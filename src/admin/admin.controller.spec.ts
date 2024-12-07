@@ -11,6 +11,8 @@ describe('AdminController', () => {
     findOne: jest.fn(),
     update: jest.fn(),
     remove: jest.fn(),
+    updateByUsername: jest.fn(),
+    findByAdminId: jest.fn(),
   };
 
   beforeEach(async () => {
@@ -77,33 +79,14 @@ describe('AdminController', () => {
     it('should return a single admin', async () => {
       const expected = { id: 1, username: 'admin1', password: 'pass1' };
 
-      mockAdminService.findOne.mockResolvedValue(expected);
+      mockAdminService.findByAdminId = jest.fn().mockResolvedValue(expected);
 
-      const result = await controller.findOne('1');
-
-      expect(result).toEqual(expected);
-      expect(mockAdminService.findOne).toHaveBeenCalledWith(1);
-    });
-  });
-
-  describe('update', () => {
-    it('should update an admin', async () => {
-      const updateAdminDto = {
-        username: 'updatedadmin',
-        password: 'newpassword',
-      };
-
-      const expected = {
-        id: 1,
-        ...updateAdminDto,
-      };
-
-      mockAdminService.update.mockResolvedValue(expected);
-
-      const result = await controller.update('1', updateAdminDto);
+      const result = await controller.findOne('ADM-123456789012');
 
       expect(result).toEqual(expected);
-      expect(mockAdminService.update).toHaveBeenCalledWith(1, updateAdminDto);
+      expect(mockAdminService.findByAdminId).toHaveBeenCalledWith(
+        'ADM-123456789012',
+      );
     });
   });
 
@@ -113,10 +96,30 @@ describe('AdminController', () => {
 
       mockAdminService.remove.mockResolvedValue(expected);
 
-      const result = await controller.remove('1');
+      const result = await controller.remove('ADM-123456789012');
 
       expect(result).toEqual(expected);
-      expect(mockAdminService.remove).toHaveBeenCalledWith(1);
+      expect(mockAdminService.remove).toHaveBeenCalledWith('ADM-123456789012');
+    });
+  });
+
+  describe('updateByUsername', () => {
+    it('should update an admin by username', async () => {
+      const updateAdminDto = {
+        email: 'new.email@example.com',
+        firstName: 'Updated',
+        lastName: 'Name',
+        password: 'newSecurePassword123',
+      };
+
+      const expected = { id: 1, ...updateAdminDto };
+      mockAdminService.updateByUsername = jest.fn().mockResolvedValue(expected);
+
+      const result = await controller.updateByUsername(
+        'admin1',
+        updateAdminDto,
+      );
+      expect(result).toEqual(expected);
     });
   });
 });
