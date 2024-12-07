@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
 @Entity()
 export class Employee {
@@ -9,12 +9,15 @@ export class Employee {
   employeeId: string;
 
   @Column()
+  username: string;
+
+  @Column()
   firstName: string;
 
   @Column()
   lastName: string;
 
-  @Column({ default: true })
+  @Column()
   isActive: boolean;
 
   @Column()
@@ -23,6 +26,9 @@ export class Employee {
   @Column()
   dateActivated: string;
 
-  @Column()
+  @Column({ nullable: true })
   dateDeactivated: string;
+
+  @Column('simple-array')
+  deviceId: string[];
 }

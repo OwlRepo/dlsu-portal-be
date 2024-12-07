@@ -11,32 +11,53 @@ import {
 import { EmployeeService } from './employee.service';
 import { CreateEmployeeDto } from './dto/create-employee.dto';
 import { UpdateEmployeeDto } from './dto/update-employee.dto';
+import { ApiTags, ApiBody, ApiOperation } from '@nestjs/swagger';
 
+@ApiTags('Employee')
 @Controller('employee')
 export class EmployeeController {
   constructor(private readonly employeeService: EmployeeService) {}
 
   @Post()
+  @ApiOperation({ summary: 'Create a new employee' })
+  @ApiBody({
+    schema: {
+      example: {
+        username: 'john.doe',
+        firstName: 'John',
+        lastName: 'Doe',
+        email: 'john.doe@example.com',
+        isActive: true,
+        deviceId: ['1234567890', '1234567891'],
+      },
+    },
+  })
   create(@Body() createEmployeeDto: CreateEmployeeDto) {
     return this.employeeService.create(createEmployeeDto);
   }
 
   @Get()
+  @ApiOperation({ summary: 'Get all employees' })
   findAll() {
     return this.employeeService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.employeeService.findOne(+id);
-  }
-
-  @Get('search')
-  search(@Query('name') name: string) {
-    return this.employeeService.search(name);
+  @Get(':idOrUsername')
+  @ApiOperation({ summary: 'Get employee by ID or username' })
+  findOne(@Param('idOrUsername') idOrUsername: string) {
+    return this.employeeService.findOne(idOrUsername);
   }
 
   @Get('created')
+  @ApiOperation({ summary: 'Get employees created within a date range' })
+  @ApiBody({
+    schema: {
+      example: {
+        startDate: '2024-03-01',
+        endDate: '2024-03-31',
+      },
+    },
+  })
   findByDateRange(
     @Query('startDate') startDate: string,
     @Query('endDate') endDate: string,
@@ -44,16 +65,28 @@ export class EmployeeController {
     return this.employeeService.findByDateRange(startDate, endDate);
   }
 
-  @Patch(':id')
+  @Patch(':employeeId')
+  @ApiOperation({ summary: 'Update employee by ID' })
+  @ApiBody({
+    schema: {
+      example: {
+        firstName: 'John',
+        lastName: 'Doe',
+        isActive: true,
+        deviceId: ['1234567890', '1234567891'],
+      },
+    },
+  })
   update(
-    @Param('id') id: string,
+    @Param('employeeId') employeeId: string,
     @Body() updateEmployeeDto: UpdateEmployeeDto,
   ) {
-    return this.employeeService.update(+id, updateEmployeeDto);
+    return this.employeeService.update(employeeId, updateEmployeeDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.employeeService.remove(+id);
+  @Delete(':employeeId')
+  @ApiOperation({ summary: 'Delete employee by ID' })
+  remove(@Param('employeeId') employeeId: string) {
+    return this.employeeService.remove(employeeId);
   }
 }
