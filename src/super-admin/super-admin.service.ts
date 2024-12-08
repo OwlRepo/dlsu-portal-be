@@ -42,6 +42,7 @@ export class SuperAdminService implements OnModuleInit {
           email: defaultSuperAdmin.email,
           password: hashedPassword,
           name: defaultSuperAdmin.name,
+          username: defaultSuperAdmin.username,
         });
         console.log('Default super admin created:', result);
       }
@@ -84,6 +85,10 @@ export class SuperAdminService implements OnModuleInit {
 
   async findOneByEmail(email: string) {
     return this.superAdminRepository.findOne({ where: { email } });
+  }
+
+  async findOneByUsername(username: string) {
+    return this.superAdminRepository.findOne({ where: { username } });
   }
 
   async createAdmin(createAdminDto: CreateAdminDto) {
@@ -135,6 +140,7 @@ export class SuperAdminService implements OnModuleInit {
     const superAdmin = this.superAdminRepository.create({
       email: createSuperAdminDto.email,
       password: hashedPassword,
+      username: createSuperAdminDto.username,
       name: createSuperAdminDto.name,
       role: 'super-admin',
       superAdminId: this.generateSecureSuperAdminId(),

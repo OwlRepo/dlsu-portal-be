@@ -25,6 +25,7 @@ export class LoginController {
     return this.loginService.validateAdminAuthentication(adminLoginDto);
   }
 
+  @Public()
   @Post('super-admin')
   superAdminLogin(@Body() loginDto: SuperAdminLoginDto) {
     return this.superAdminAuthService.login(loginDto);

@@ -17,6 +17,7 @@ import { ApiTags, ApiOperation, ApiBody } from '@nestjs/swagger';
 export class SuperAdminController {
   constructor(private readonly superAdminService: SuperAdminService) {}
 
+  @UseGuards(JwtAuthGuard)
   @Post('register')
   @ApiOperation({ summary: 'Register a new super admin' })
   @ApiBody({ type: CreateSuperAdminDto })

@@ -16,18 +16,24 @@ export class SuperAdminAuthService {
   ) {}
 
   async login(loginDto: SuperAdminLoginDto) {
-    const superAdmin = await this.superAdminService.findOneByEmail(
-      loginDto.email,
+    const superAdmin = await this.superAdminService.findOneByUsername(
+      loginDto.username,
     );
 
     if (!superAdmin) {
       throw new NotFoundException('Super Admin not found');
     }
 
+    // Log values for debugging
+    console.log('Login password:', loginDto.password);
+    console.log('Stored hashed password:', superAdmin.password);
+
     const isPasswordValid = await bcrypt.compare(
       loginDto.password,
-      superAdmin.password,
+      superAdmin.password.trim(), // Trim any whitespace from stored hash
     );
+
+    console.log('Password valid?', isPasswordValid);
 
     if (!isPasswordValid) {
       throw new UnauthorizedException('Invalid credentials');
@@ -35,12 +41,13 @@ export class SuperAdminAuthService {
 
     const payload = {
       sub: superAdmin.id,
-      email: superAdmin.email,
+      username: superAdmin.username,
       role: 'superadmin',
     };
 
     return {
-      access_token: await this.jwtService.signAsync(payload),
+      message: 'Admin authentication successful',
+      access_token: 'Bearer ' + this.jwtService.sign(payload),
     };
   }
 }
