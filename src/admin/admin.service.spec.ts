@@ -33,37 +33,6 @@ describe('AdminService', () => {
     expect(service).toBeDefined();
   });
 
-  describe('create', () => {
-    it('should successfully create an admin', async () => {
-      const createAdminDto = {
-        username: 'testadmin',
-        password: 'password123',
-        email: 'test@admin.com',
-        firstName: 'Test',
-        lastName: 'Admin',
-        role: 'admin',
-      };
-
-      const admin = { id: 1, ...createAdminDto };
-
-      mockRepository.create.mockReturnValue(admin);
-      mockRepository.save.mockResolvedValue(admin);
-
-      const result = await service.create(createAdminDto);
-
-      expect(result).toEqual({
-        ...admin,
-        password: createAdminDto.password,
-      });
-      expect(mockRepository.create).toHaveBeenCalledWith({
-        ...createAdminDto,
-        adminId: expect.any(String),
-        password: expect.any(String),
-      });
-      expect(mockRepository.save).toHaveBeenCalledWith(admin);
-    });
-  });
-
   describe('findAll', () => {
     it('should return an array of admins', async () => {
       const expected = [

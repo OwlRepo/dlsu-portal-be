@@ -9,6 +9,7 @@ import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AdminModule } from './admin/admin.module';
 import { UsersModule } from './users/users.module';
+import { SuperAdminModule } from './super-admin/super-admin.module';
 
 @Module({
   imports: [
@@ -25,6 +26,8 @@ import { UsersModule } from './users/users.module';
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: process.env.NODE_ENV !== 'production',
       autoLoadEntities: true,
+      migrations: [__dirname + '/migrations/**/*{.ts,.js}'],
+      migrationsRun: true,
     }),
     JwtModule.register({
       secret: process.env.JWT_SECRET,
@@ -35,6 +38,7 @@ import { UsersModule } from './users/users.module';
     LoginModule,
     AdminModule,
     UsersModule,
+    SuperAdminModule,
   ],
   controllers: [AppController],
   providers: [AppService],

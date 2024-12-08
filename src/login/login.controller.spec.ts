@@ -5,6 +5,7 @@ import { JwtService } from '@nestjs/jwt';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Admin } from '../admin/entities/admin.entity';
 import { AdminLoginDto } from './dto/admin-login.dto';
+import { SuperAdminAuthService } from './services/super-admin-auth.service';
 
 describe('LoginController', () => {
   let controller: LoginController;
@@ -14,6 +15,10 @@ describe('LoginController', () => {
     findOne: jest.fn(),
     create: jest.fn(),
     save: jest.fn(),
+  };
+
+  const mockSuperAdminAuthService = {
+    validateSuperAdmin: jest.fn(),
   };
 
   beforeEach(async () => {
@@ -31,6 +36,10 @@ describe('LoginController', () => {
         {
           provide: getRepositoryToken(Admin),
           useValue: mockAdminRepository,
+        },
+        {
+          provide: SuperAdminAuthService,
+          useValue: mockSuperAdminAuthService,
         },
       ],
     }).compile();

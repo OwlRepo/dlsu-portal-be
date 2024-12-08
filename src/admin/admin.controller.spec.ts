@@ -32,33 +32,6 @@ describe('AdminController', () => {
   it('should be defined', () => {
     expect(controller).toBeDefined();
   });
-
-  describe('create', () => {
-    it('should create a new admin', async () => {
-      const createAdminDto = {
-        username: 'testadmin',
-        password: 'password123',
-        email: 'test@admin.com',
-        firstName: 'Test',
-        lastName: 'Admin',
-        role: 'admin',
-      };
-
-      mockAdminService.create.mockResolvedValue({
-        id: 1,
-        ...createAdminDto,
-      });
-
-      const result = await controller.create(createAdminDto);
-
-      expect(result).toEqual({
-        id: 1,
-        ...createAdminDto,
-      });
-      expect(mockAdminService.create).toHaveBeenCalledWith(createAdminDto);
-    });
-  });
-
   describe('findAll', () => {
     it('should return an array of admins', async () => {
       const expected = [

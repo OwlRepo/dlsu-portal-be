@@ -1,5 +1,10 @@
-import { IsNotEmpty, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { IsString, IsNotEmpty } from 'class-validator';
+
+export enum UserRole {
+  ADMIN = 'admin',
+  SUPER_ADMIN = 'super_admin',
+}
 
 export class CreateAdminDto {
   @IsNotEmpty()
@@ -49,12 +54,4 @@ export class CreateAdminDto {
     description: 'The role of the admin',
   })
   role: string;
-
-  @IsNotEmpty()
-  @IsString()
-  @ApiProperty({
-    example: 'John',
-    description: 'The name of the admin',
-  })
-  name: string;
 }

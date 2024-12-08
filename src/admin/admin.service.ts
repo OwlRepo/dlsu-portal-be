@@ -1,7 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { CreateAdminDto } from './dto/create-admin.dto';
 import { UpdateAdminDto } from './dto/update-admin.dto';
 import { Admin } from './entities/admin.entity';
 import * as bcrypt from 'bcrypt';
@@ -36,48 +35,6 @@ export class AdminService {
     const randomBytes = crypto.randomBytes(6);
     const randomHex = randomBytes.toString('hex').toUpperCase();
     return `ADM-${randomHex}`;
-  }
-
-  async create(createAdminDto: CreateAdminDto) {
-    // Check for existing admin with same username
-    const existingAdmin = await this.adminRepository.findOne({
-      where: { username: createAdminDto.username },
-    });
-
-    if (existingAdmin) {
-      throw new NotFoundException(
-        `Admin with username ${createAdminDto.username} already exists`,
-      );
-    }
-
-    // Check for existing admin with same email
-    const existingEmail = await this.adminRepository.findOne({
-      where: { email: createAdminDto.email },
-    });
-
-    if (existingEmail) {
-      throw new NotFoundException(
-        `Admin with email ${createAdminDto.email} already exists`,
-      );
-    }
-
-    const saltRounds = 10;
-    const hashedPassword = await bcrypt.hash(
-      createAdminDto.password,
-      saltRounds,
-    );
-
-    const admin = this.adminRepository.create({
-      ...createAdminDto,
-      adminId: this.generateSecureAdminId(),
-      password: hashedPassword,
-    });
-
-    const savedAdmin = await this.adminRepository.save(admin);
-    return {
-      ...savedAdmin,
-      password: createAdminDto.password, // Return unhashed password
-    };
   }
 
   async findAll() {
