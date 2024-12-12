@@ -6,6 +6,7 @@ import { Repository } from 'typeorm';
 import { AdminLoginDto } from './dto/admin-login.dto';
 import { Admin } from '../admin/entities/admin.entity';
 import * as bcrypt from 'bcrypt';
+import { TokenBlacklistService } from '../auth/token-blacklist.service';
 
 @Injectable()
 export class LoginService {
@@ -13,6 +14,7 @@ export class LoginService {
     private jwtService: JwtService,
     @InjectRepository(Admin)
     private adminRepository: Repository<Admin>,
+    private readonly tokenBlacklistService: TokenBlacklistService,
   ) {}
 
   async validateAdminAuthentication(adminLoginDto: AdminLoginDto) {
@@ -47,5 +49,10 @@ export class LoginService {
       message: 'Admin authentication successful',
       access_token: 'Bearer ' + this.jwtService.sign(payload),
     };
+  }
+
+  async logout(token: string) {
+    await this.tokenBlacklistService.blacklistToken(token);
+    return { message: 'Logged out successfully' };
   }
 }

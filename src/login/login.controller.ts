@@ -1,10 +1,12 @@
-import { Controller, Post, Body } from '@nestjs/common';
+import { Controller, Post, Body, UseGuards } from '@nestjs/common';
 import { LoginService } from './login.service';
 import { AdminLoginDto } from './dto/admin-login.dto';
 import { Public } from '../auth/public.decorator';
-import { ApiBody, ApiOperation } from '@nestjs/swagger';
+import { ApiBody, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { SuperAdminAuthService } from './services/super-admin-auth.service';
 import { SuperAdminLoginDto } from '../super-admin/dto/super-admin.dto';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { Request } from '@nestjs/common';
 
 @Controller('auth')
 export class LoginController {
@@ -35,5 +37,14 @@ export class LoginController {
   })
   superAdminLogin(@Body() loginDto: SuperAdminLoginDto) {
     return this.superAdminAuthService.login(loginDto);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('logout')
+  @ApiOperation({ summary: 'Logout user and invalidate token' })
+  @ApiBearerAuth()
+  async logout(@Request() req) {
+    const token = req.headers.authorization?.split(' ')[1];
+    return this.loginService.logout(token);
   }
 }

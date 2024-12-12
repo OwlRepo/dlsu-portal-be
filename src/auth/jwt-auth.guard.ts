@@ -1,15 +1,20 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  ExecutionContext,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { JwtService } from '@nestjs/jwt';
-import { ExecutionContext } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { IS_PUBLIC_KEY } from './public.decorator';
+import { TokenBlacklistService } from './token-blacklist.service';
 
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt') {
   constructor(
     private jwtService: JwtService,
     private reflector: Reflector,
+    private readonly tokenBlacklistService: TokenBlacklistService,
   ) {
     super();
   }
@@ -24,7 +29,6 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
       return true;
     }
 
-    // Rest of the guard logic...
     const request = context.switchToHttp().getRequest();
     const token = this.extractTokenFromHeader(request);
 
@@ -33,19 +37,20 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
       throw new UnauthorizedException('No token provided');
     }
 
+    // Check if token is blacklisted
+    if (this.tokenBlacklistService.isBlacklisted(token)) {
+      throw new UnauthorizedException('Token has been invalidated');
+    }
+
     try {
       const payload = await this.jwtService.verifyAsync(token, {
-        // Make sure this secret matches your JWT_SECRET in your configuration
         secret: process.env.JWT_SECRET,
       });
 
-      // Add some debug logging
       console.log('Token payload:', payload);
-
       request['user'] = payload;
       return true;
     } catch (error) {
-      // Add more detailed error logging
       console.error('JWT verification failed:', error.message);
       throw new UnauthorizedException('Invalid token');
     }

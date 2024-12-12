@@ -6,6 +6,7 @@ import { LoginController } from './login.controller';
 import { Admin } from '../admin/entities/admin.entity';
 import { SuperAdminModule } from '../super-admin/super-admin.module';
 import { SuperAdminAuthService } from './services/super-admin-auth.service';
+import { AuthModule } from '../auth/auth.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { SuperAdminAuthService } from './services/super-admin-auth.service';
       signOptions: { expiresIn: '60m' },
     }),
     SuperAdminModule,
+    AuthModule,
   ],
   controllers: [LoginController],
   providers: [LoginService, SuperAdminAuthService],
