@@ -6,7 +6,7 @@ import { Repository } from 'typeorm';
 import { AdminLoginDto } from './dto/admin-login.dto';
 import { Admin } from '../admin/entities/admin.entity';
 import * as bcrypt from 'bcrypt';
-import { TokenBlacklistService } from '../auth/token-blacklist.service';
+import { TokenBlacklistService } from 'src/auth/token-blacklist.service';
 
 @Injectable()
 export class LoginService {
