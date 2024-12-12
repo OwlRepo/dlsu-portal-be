@@ -29,15 +29,25 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     const token = this.extractTokenFromHeader(request);
 
     if (!token) {
-      throw new UnauthorizedException();
+      console.log('No token found in request');
+      throw new UnauthorizedException('No token provided');
     }
 
     try {
-      const payload = await this.jwtService.verifyAsync(token);
+      const payload = await this.jwtService.verifyAsync(token, {
+        // Make sure this secret matches your JWT_SECRET in your configuration
+        secret: process.env.JWT_SECRET,
+      });
+
+      // Add some debug logging
+      console.log('Token payload:', payload);
+
       request['user'] = payload;
       return true;
-    } catch {
-      throw new UnauthorizedException();
+    } catch (error) {
+      // Add more detailed error logging
+      console.error('JWT verification failed:', error.message);
+      throw new UnauthorizedException('Invalid token');
     }
   }
 

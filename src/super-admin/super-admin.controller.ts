@@ -30,6 +30,7 @@ export class SuperAdminController {
   @ApiOperation({ summary: 'Create a new admin (Super Admin only)' })
   @ApiBody({ type: CreateAdminDto })
   async createAdmin(@Body() createAdminDto: CreateAdminDto, @Req() req) {
+    console.log(req.user);
     if (req.user.role !== 'super-admin') {
       throw new ForbiddenException('Only super admins can create new admins');
     }

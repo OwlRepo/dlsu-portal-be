@@ -27,6 +27,12 @@ export class LoginController {
 
   @Public()
   @Post('super-admin')
+  @ApiOperation({ summary: 'Authenticate super admin' })
+  @ApiBody({
+    schema: {
+      example: { username: 'superadmin', password: 'password' },
+    },
+  })
   superAdminLogin(@Body() loginDto: SuperAdminLoginDto) {
     return this.superAdminAuthService.login(loginDto);
   }

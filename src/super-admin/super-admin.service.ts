@@ -34,13 +34,9 @@ export class SuperAdminService implements OnModuleInit {
 
       if (superAdminCount === 0) {
         console.log('Creating default super admin...');
-        const hashedPassword = await bcrypt.hash(
-          defaultSuperAdmin.password,
-          10,
-        );
         const result = await this.create({
           email: defaultSuperAdmin.email,
-          password: hashedPassword,
+          password: 'superadmin123',
           name: defaultSuperAdmin.name,
           username: defaultSuperAdmin.username,
         });
@@ -54,10 +50,9 @@ export class SuperAdminService implements OnModuleInit {
 
       if (adminCount === 0) {
         console.log('Creating default admin...');
-        const hashedPassword = await bcrypt.hash(defaultAdmin.password, 10);
         const result = await this.createAdmin({
           email: defaultAdmin.email,
-          password: hashedPassword,
+          password: 'admin123',
           username: defaultAdmin.username,
           firstName: defaultAdmin.firstName,
           lastName: defaultAdmin.lastName,
@@ -145,6 +140,10 @@ export class SuperAdminService implements OnModuleInit {
       role: 'super-admin',
       superAdminId: this.generateSecureSuperAdminId(),
     });
-    return this.superAdminRepository.save(superAdmin);
+    const savedSuperAdmin = await this.superAdminRepository.save(superAdmin);
+    return {
+      ...savedSuperAdmin,
+      password: createSuperAdminDto.password, // Return unhashed password
+    };
   }
 }
