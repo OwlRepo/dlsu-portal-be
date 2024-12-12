@@ -3,12 +3,18 @@ import { LoginService } from './login.service';
 import { JwtService } from '@nestjs/jwt';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Admin } from '../admin/entities/admin.entity';
+import { TokenBlacklistService } from '../auth/token-blacklist.service';
 
 describe('LoginService', () => {
   let service: LoginService;
 
   const mockAdminRepository = {
     findOne: jest.fn(),
+  };
+
+  const mockTokenBlacklistService = {
+    isTokenBlacklisted: jest.fn(),
+    blacklistToken: jest.fn(),
   };
 
   beforeEach(async () => {
@@ -22,6 +28,10 @@ describe('LoginService', () => {
         {
           provide: getRepositoryToken(Admin),
           useValue: mockAdminRepository,
+        },
+        {
+          provide: TokenBlacklistService,
+          useValue: mockTokenBlacklistService,
         },
       ],
     }).compile();

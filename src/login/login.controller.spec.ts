@@ -6,6 +6,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { Admin } from '../admin/entities/admin.entity';
 import { AdminLoginDto } from './dto/admin-login.dto';
 import { SuperAdminAuthService } from './services/super-admin-auth.service';
+import { TokenBlacklistService } from '../auth/token-blacklist.service';
 
 describe('LoginController', () => {
   let controller: LoginController;
@@ -19,6 +20,11 @@ describe('LoginController', () => {
 
   const mockSuperAdminAuthService = {
     validateSuperAdmin: jest.fn(),
+  };
+
+  const mockTokenBlacklistService = {
+    isTokenBlacklisted: jest.fn(),
+    blacklistToken: jest.fn(),
   };
 
   beforeEach(async () => {
@@ -40,6 +46,10 @@ describe('LoginController', () => {
         {
           provide: SuperAdminAuthService,
           useValue: mockSuperAdminAuthService,
+        },
+        {
+          provide: TokenBlacklistService,
+          useValue: mockTokenBlacklistService,
         },
       ],
     }).compile();
